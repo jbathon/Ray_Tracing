@@ -18,6 +18,10 @@ Vector3d::Vector3d(GLdouble c1, GLdouble c2, GLdouble c3) {
     coords[2] = c3;
 }
 
+Vector3d::~Vector3d() {
+
+}
+
 GLdouble Vector3d::x() const{
     return coords[0];
 }
@@ -66,3 +70,4 @@ GLdouble Vector3d::length() const {
 GLdouble Vector3d::length_squared() const {
     return coords[0]*coords[0] + coords[1]*coords[1] + coords[2]*coords[2];
 }
+

@@ -11,24 +11,25 @@
 
 class Vector3d {
     protected:
-        GLdouble coords[3];
+        double coords[3];
     public:
         Vector3d();
-        Vector3d(GLdouble c1, GLdouble c2, GLdouble c3);
+        Vector3d(double c1, double c2, double c3);
+        ~Vector3d();
 
-        GLdouble x() const;
-        GLdouble y() const;
-        GLdouble z() const;
+        double x() const;
+        double y() const;
+        double z() const;
 
         Vector3d operator-() const;
-        GLdouble operator[](int i) const;
-        GLdouble& operator[](int i);
+        double operator[](int i) const;
+        double& operator[](int i);
         Vector3d& operator+=(const Vector3d &v);
-        Vector3d& operator*=(const GLdouble t);
-        Vector3d& operator/=(const GLdouble t);
+        Vector3d& operator*=(const double t);
+        Vector3d& operator/=(const double t);
 
-        GLdouble length() const;
-        GLdouble length_squared() const;
+        double length() const;
+        double length_squared() const;
 
 };
 
@@ -51,15 +52,15 @@ inline Vector3d operator*(const Vector3d &u, const Vector3d &v) {
     return Vector3d(u[0] * v[0], u[1] * v[1], u[2] * v[2]);
 }
 
-inline Vector3d operator*(GLdouble t, const Vector3d &v) {
+inline Vector3d operator*(double t, const Vector3d &v) {
     return Vector3d(t * v[0], t * v[1], t * v[2]);
 }
 
-inline Vector3d operator*(const Vector3d &v, GLdouble t) {
+inline Vector3d operator*(const Vector3d &v, double t) {
     return t * v;
 }
 
-inline Vector3d operator/(Vector3d v, GLdouble t) {
+inline Vector3d operator/(Vector3d v, double t) {
     return (1/t) * v;
 }
 

@@ -1,23 +1,17 @@
 #include "Ray.h"
 #include "Vector3d.h"
 #include "PPM.h"
+#include "Sphere.h"
 
 
 /**** Image Globals****/
 
 
-bool hit_sphere(const Point3d& center, double radius, const Ray& r) {
-    Vector3d oc = r.origin() - center;
-    auto a = dot(r.direction(), r.direction());
-    auto b = 2.0 * dot(oc, r.direction());
-    auto c = dot(oc, oc) - radius*radius;
-    auto discriminant = b*b - 4*a*c;
-    return (discriminant > 0);
-}
+Shape* s = new Sphere(Point3d(0, 0, -1), 0.5);
 
 Color3d rayColor(const Ray& ray) {
-    if (hit_sphere(Point3d(0, 0, -1), 0.5, ray)) {
-        return Color3d(1, 0, 0);
+    if (s->hit(ray)) {
+        return Color3d(0, 1, 0);
     }
     Vector3d unit_direction = unit_vector(ray.direction());
     auto t = 0.5*(unit_direction.y() + 1.0);
