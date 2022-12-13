@@ -31,6 +31,9 @@ class Vector3d {
         double length() const;
         double length_squared() const;
 
+        Vector3d limitToRange(double minVal, double maxVal);
+        static Vector3d random();
+        static Vector3d random(double min,double max);
 };
 
 using Point3d = Vector3d;
@@ -76,8 +79,35 @@ inline Vector3d cross(const Vector3d &u, const Vector3d &v) {
                     u[0] * v[1] - u[1] * v[0]);
 }
 
-inline Vector3d unit_vector(Vector3d v) {
+inline Vector3d unitVector(Vector3d v) {
     return v / v.length();
 }
+
+inline Vector3d sqrt(Vector3d &v) {
+    return Vector3d(sqrt(v[0]),sqrt(v[1]),sqrt(v[2]));
+}
+
+inline Vector3d randomInUnitSphere() {
+    while (true) {
+        auto p = Vector3d::random(-1,1);
+        if (p.length_squared() >= 1) continue;
+        return p;
+    }
+}
+
+inline Vector3d randomUnitVector() {
+    return unitVector(randomInUnitSphere());
+}
+
+inline Vector3d randomInHemisphere(const Vector3d& normal) {
+    Vector3d inUnitSphere = randomInUnitSphere();
+    if (dot(inUnitSphere,normal)>0.0){
+        return inUnitSphere;
+    }
+    else {
+        return  -inUnitSphere;
+    }
+}
+
 
 #endif //OPENGL_RAY_TRACING_VECTOR3D_H

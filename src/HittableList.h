@@ -5,12 +5,26 @@
 #ifndef RAY_TRACING_HITTABLELIST_H
 #define RAY_TRACING_HITTABLELIST_H
 
+#include "HittableInterface.h"
 
+#include <memory>
+#include <vector>
 
-class HittableList {
+using std::shared_ptr;
+using std::make_shared;
 
+class HittableList : public HittableInterface {
+    private:
+        std::vector<shared_ptr<HittableInterface>> objects_;
+    public:
+        HittableList();
+        HittableList(shared_ptr<HittableInterface> object) { add(object); }
+
+        void clear();
+        void add(shared_ptr<HittableInterface> object);
+
+        virtual bool hit(const Ray& ray, double minT, double maxT, HitRecord& rec) const override;
 };
-
 
 
 #endif //RAY_TRACING_HITTABLELIST_H

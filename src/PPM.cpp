@@ -4,6 +4,7 @@
 
 #include "PPM.h"
 #include <fstream>
+#include "Utilities.h"
 
 PPM::PPM(int width, int height) {
     this->width = width;
@@ -35,9 +36,10 @@ void PPM::save(string path, string name) {
 }
 
 void PPM::writeColor(std::ostream &out, Color3d color) {
-    out << static_cast<int>(255.999 * color.x()) << ' '
-        << static_cast<int>(255.999 * color.y()) << ' '
-        << static_cast<int>(255.999 * color.z()) << '\n';
+    Color3d c = color.limitToRange(0.0, 0.999);
+    out << static_cast<int>(256 * c.x()) << ' '
+        << static_cast<int>(256 * c.y()) << ' '
+        << static_cast<int>(256 * c.z()) << '\n';
 }
 
 PPM::~PPM() {

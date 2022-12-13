@@ -3,6 +3,7 @@
 //
 
 #include "Vector3d.h"
+#include "Utilities.h"
 
 using std::sqrt;
 
@@ -71,3 +72,23 @@ GLdouble Vector3d::length_squared() const {
     return coords[0]*coords[0] + coords[1]*coords[1] + coords[2]*coords[2];
 }
 
+Vector3d Vector3d::limitToRange(double minVal, double maxVal) {
+    Vector3d vec = Vector3d(this->coords[0], this->coords[1], this->coords[2]);
+    for (double &coord: vec.coords) {
+        if (coord < minVal) {
+            coord = minVal;
+        }
+        if (coord > maxVal) {
+            coord = maxVal;
+        }
+    }
+    return vec;
+}
+
+Vector3d Vector3d::random() {
+    return Vector3d(randomDouble(),randomDouble(),randomDouble());
+}
+
+Vector3d Vector3d::random(double min, double max) {
+    return Vector3d(randomDouble(min,max),randomDouble(min,max),randomDouble(min,max));
+}
