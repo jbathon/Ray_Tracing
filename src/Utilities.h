@@ -1,0 +1,8 @@
+//
+// Created by jaden on 12/12/2022.
+//
+
+#ifndef RAY_TRACING_ULTILITIES_H
+#define RAY_TRACING_ULTILITIES_H
+
+#endif //RAY_TRACING_ULTILITIES_H
