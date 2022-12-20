@@ -5,12 +5,15 @@
 #ifndef RAY_TRACING_HITTABLEINTERFACE_H
 #define RAY_TRACING_HITTABLEINTERFACE_H
 
-#include "Ray.h"
+#include "Utilities.h"
+
+class Material;
 
 struct HitRecord {
     Point3d p_;
     Vector3d normal_;
     double t_;
+    shared_ptr<Material> matPtr_;
     bool frontFace_;
 
     inline void setFaceNormal(const Ray& ray, const Vector3d& outwardNormal) {

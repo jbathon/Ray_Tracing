@@ -11,9 +11,10 @@ class Sphere : public HittableInterface {
     private:
         Point3d center_;
         double radius_;
+        shared_ptr<Material> matPtr_;
     public:
         Sphere() {};
-        Sphere(const Point3d& center, double radius);
+        Sphere(const Point3d& center, double radius, shared_ptr<Material> m);
         ~Sphere();
         virtual bool hit(const Ray& ray, double minT, double maxT, HitRecord& rec) const override;
         Point3d& center();

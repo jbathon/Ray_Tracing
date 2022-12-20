@@ -4,9 +4,10 @@
 
 #include "Sphere.h"
 
-Sphere::Sphere(const Point3d& center, double radius) {
+Sphere::Sphere(const Point3d& center, double radius, shared_ptr<Material> m) {
     center_ = center;
     radius_ = radius;
+    matPtr_ = m;
 }
 
 Sphere::~Sphere() {
@@ -39,6 +40,7 @@ bool Sphere::hit(const Ray& ray, double t_min, double t_max, HitRecord& rec) con
     rec.p_ = ray.at(rec.t_);
     Vector3d outward_normal = (rec.p_ - center_) / radius_;
     rec.setFaceNormal(ray, outward_normal);
+    rec.matPtr_ = matPtr_;
 
     return true;
 }
