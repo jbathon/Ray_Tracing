@@ -1,0 +1,29 @@
+//
+// Created by jaden on 12/20/2022.
+//
+
+#ifndef RAY_TRACING_METAL_H
+#define RAY_TRACING_METAL_H
+
+#endif //RAY_TRACING_METAL_H
+
+#include "Material.h"
+
+class Metal : public Material {
+
+    private:
+        Color3d albedo;
+        double fuzz;
+    public:
+        Metal(const Color3d& a, double f) : albedo(a), fuzz(f < 1 ? f : 1) {}
+
+        virtual bool scatter(
+                const Ray& r_in, const HitRecord& rec, Color3d& attenuation, Ray& scattered
+        ) const override {
+            Vector3d reflected = reflect(unitVector(r_in.direction()), rec.normal_);
+            scattered = Ray(rec.p_, reflected);
+            attenuation = albedo;
+            return (dot(scattered.direction(), rec.normal_) > 0);
+        }
+
+};

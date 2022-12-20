@@ -7,14 +7,17 @@
 #include <omp.h>
 #include "Camera.h"
 #include "Sphere.h"
-
+#include "Material.h"
+#include "Lambertian.h"
+#include "Metal.h"
+#include "Dielectric.h"
 
 
 /**** Image Globals****/
 const auto aspect_ratio = 16.0 / 9.0;
 const int width = 1280;
 const int height = static_cast<int>(width / aspect_ratio);
-const int samplesPerPixel = 100;
+const int samplesPerPixel = 500;
 const int maxDepth = 50;
 double xOffset = 0;
 double yOffset = 0;
@@ -31,8 +34,13 @@ Color3d rayColor(const Ray& ray, const HittableInterface& shape, int depth) {
         return Color3d(0,0,0);
 
     if (shape.hit(ray,0,infinity, rec)) {
-        Point3d target = rec.p_ + randomInHemisphere(rec.normal_);
-        return 0.5 * rayColor(Ray(rec.p_, target - rec.p_), shape, depth-1);
+        Ray scattered;
+        Color3d attenuation;
+        if (rec.matPtr_->scatter(ray, rec, attenuation, scattered)) {
+            return attenuation * rayColor(scattered, shape, depth-1);
+        }
+
+        return Color3d(0,0,0);
     }
     Vector3d unitDirection = unitVector(ray.direction());
     auto t = 0.5*(unitDirection.y() + 1.0);
@@ -86,18 +94,69 @@ void reshape(int w, int h) {
     glutPostRedisplay();
 }
 
+HittableList random_scene() {
+    HittableList world;
+
+    auto ground_material = make_shared<Lambertian>(Color3d(0.5, 0.5, 0.5));
+    world.add(make_shared<Sphere>(Point3d(0,-1000,0), 1000, ground_material));
+
+    for (int a = -11; a < 11; a++) {
+        for (int b = -11; b < 11; b++) {
+            auto choose_mat = randomDouble();
+            Point3d center(a + 0.9*randomDouble(), 0.2, b + 0.9*randomDouble());
+
+            if ((center - Point3d(4, 0.2, 0)).length() > 0.9) {
+                shared_ptr<Material> sphere_material;
+
+                if (choose_mat < 0.8) {
+                    // diffuse
+                    auto albedo = Color3d::random() * Color3d::random();
+                    sphere_material = make_shared<Lambertian>(albedo);
+                    world.add(make_shared<Sphere>(center, 0.2, sphere_material));
+                } else if (choose_mat < 0.95) {
+                    // metal
+                    auto albedo = Color3d::random(0.5, 1);
+                    auto fuzz = randomDouble(0, 0.5);
+                    sphere_material = make_shared<Metal>(albedo, fuzz);
+                    world.add(make_shared<Sphere>(center, 0.2, sphere_material));
+                } else {
+                    // glass
+                    sphere_material = make_shared<Dielectric>(1.5);
+                    world.add(make_shared<Sphere>(center, 0.2, sphere_material));
+                }
+            }
+        }
+    }
+
+    auto material1 = make_shared<Dielectric>(1.5);
+    world.add(make_shared<Sphere>(Point3d(0, 1, 0), 1.0, material1));
+
+    auto material2 = make_shared<Lambertian>(Color3d(0.4, 0.2, 0.1));
+    world.add(make_shared<Sphere>(Point3d(-4, 1, 0), 1.0, material2));
+
+    auto material3 = make_shared<Metal>(Color3d(0.7, 0.6, 0.5), 0.0);
+    world.add(make_shared<Sphere>(Point3d(4, 1, 0), 1.0, material3));
+
+    return world;
+}
+
+
 
 int main(int argc, char **argv) {
 
     // HittableList
-        HittableList world;
-        world.add(make_shared<Sphere>(Point3d(0,0,-1), 0.5));
-        world.add(make_shared<Sphere>(Point3d(0,-100.5,-1), 100));
+    auto world = random_scene();
 
 
 
     // Camera
-    Camera cam;
+    Point3d lookfrom(13,2,3);
+    Point3d lookat(0,0,0);
+    Vector3d vup(0,1,0);
+    auto dist_to_focus = 10.0;
+    auto aperture = 0.1;
+
+    Camera cam(lookfrom, lookat, vup, 20, aspect_ratio, aperture, dist_to_focus);
 
 
     // Render

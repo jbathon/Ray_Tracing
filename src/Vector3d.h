@@ -34,6 +34,12 @@ class Vector3d {
         Vector3d limitToRange(double minVal, double maxVal);
         static Vector3d random();
         static Vector3d random(double min,double max);
+
+    bool near_zero() const {
+        // Return true if the vector is close to zero in all dimensions.
+        const auto s = 1e-8;
+        return (fabs(coords[0]) < s) && (fabs(coords[1]) < s) && (fabs(coords[2]) < s);
+    }
 };
 
 using Point3d = Vector3d;
@@ -107,6 +113,17 @@ inline Vector3d randomInHemisphere(const Vector3d& normal) {
     else {
         return  -inUnitSphere;
     }
+}
+
+inline Vector3d reflect(const Vector3d& v, const Vector3d& n) {
+    return v - 2*dot(v,n)*n;
+}
+
+inline Vector3d refract(const Vector3d& uv, const Vector3d& n, double etai_over_etat) {
+    auto cos_theta = fmin(dot(-uv, n), 1.0);
+    Vector3d r_out_perp =  etai_over_etat * (uv + cos_theta*n);
+    Vector3d r_out_parallel = -sqrt(fabs(1.0 - r_out_perp.length_squared())) * n;
+    return r_out_perp + r_out_parallel;
 }
 
 

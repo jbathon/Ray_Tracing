@@ -6,13 +6,14 @@
 #define RAY_TRACING_MATERIAL_H
 
 #include "Utilities.h"
+#include "HittableInterface.h"
 
-struct hitRecord;
+struct HitRecord;
 
 class Material {
 public:
     virtual bool scatter(
-            const Ray& rayIn, const hitRecord& rec, Color3d& attenuation, Ray& scattered
+            const Ray& rayIn, const HitRecord& rec, Color3d& attenuation, Ray& scattered
     ) const = 0;
 };
 

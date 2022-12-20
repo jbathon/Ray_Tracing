@@ -13,6 +13,7 @@ class Ray {
         Point3d orig;
         Vector3d dir;
     public:
+        Ray() {};
         Ray(const Point3d& origin, const Vector3d& direction);
 
         Point3d origin() const;

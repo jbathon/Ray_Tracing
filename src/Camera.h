@@ -5,7 +5,7 @@
 #ifndef RAY_TRACING_CAMERA_H
 #define RAY_TRACING_CAMERA_H
 
-#include "ray.h"
+#include "Utilities.h"
 
 class Camera {
     private:
@@ -13,9 +13,17 @@ class Camera {
         Point3d lowerLeftCorner_;
         Vector3d horizontal_;
         Vector3d vertical_;
+        Vector3d u, v, w;
+        double lensRadius;
     public:
-        Camera();
-        Ray getRay(double u, double v);
+        Camera(Point3d lookfrom,
+               Point3d lookat,
+               Vector3d   vup,
+               double vfov, // vertical field-of-view in degrees
+               double aspect_ratio,
+               double aperture,
+               double focus_dist);
+        Ray getRay(double s, double t) const;
 
 };
 
