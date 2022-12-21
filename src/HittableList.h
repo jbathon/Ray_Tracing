@@ -14,7 +14,7 @@ using std::shared_ptr;
 using std::make_shared;
 
 class HittableList : public HittableInterface {
-    private:
+    public:
         std::vector<shared_ptr<HittableInterface>> objects_;
     public:
         HittableList();
@@ -24,6 +24,7 @@ class HittableList : public HittableInterface {
         void add(shared_ptr<HittableInterface> object);
 
         virtual bool hit(const Ray& ray, double minT, double maxT, HitRecord& rec) const override;
+        virtual bool boundingBox(double time0, double time1, AABB& outputBox) const override;
 };
 
 

@@ -15,6 +15,8 @@ class Camera {
         Vector3d vertical_;
         Vector3d u, v, w;
         double lensRadius;
+        double time0_;
+        double time1_;
     public:
         Camera(Point3d lookfrom,
                Point3d lookat,
@@ -22,7 +24,9 @@ class Camera {
                double vfov, // vertical field-of-view in degrees
                double aspect_ratio,
                double aperture,
-               double focus_dist);
+               double focus_dist,
+               double time0 = 0,
+               double time1 = 0);
         Ray getRay(double s, double t) const;
 
 };

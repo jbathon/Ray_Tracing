@@ -10,7 +10,9 @@ Camera::Camera(Point3d lookfrom,
                double vfov, // vertical field-of-view in degrees
                double aspect_ratio,
                double aperture,
-               double focus_dist) {
+               double focus_dist,
+               double time0,
+               double time1) {
 
         auto theta = degreesToRadians(vfov);
         auto h = tan(theta/2);
@@ -32,8 +34,16 @@ Camera::Camera(Point3d lookfrom,
         lowerLeftCorner_ = origin_ - horizontal_/2 - vertical_/2 - focus_dist*w;
 
         lensRadius = aperture / 2;
+
+        time0_ = time0;
+        time1_ = time1;
 }
 
 Ray Camera::getRay(double s, double t) const{
-    return Ray(origin_, lowerLeftCorner_ + s*horizontal_ + t*vertical_ - origin_);
+    Vector3d rd = lensRadius * randomInUnitDisk();
+    Vector3d offset = u * rd.x() + v * rd.y();
+
+    return Ray(origin_ + offset,
+               lowerLeftCorner_ + s*horizontal_ + t*vertical_ - origin_ - offset,
+               randomDouble(time0_,time1_));
 }

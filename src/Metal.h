@@ -18,12 +18,7 @@ class Metal : public Material {
         Metal(const Color3d& a, double f) : albedo(a), fuzz(f < 1 ? f : 1) {}
 
         virtual bool scatter(
-                const Ray& r_in, const HitRecord& rec, Color3d& attenuation, Ray& scattered
-        ) const override {
-            Vector3d reflected = reflect(unitVector(r_in.direction()), rec.normal_);
-            scattered = Ray(rec.p_, reflected);
-            attenuation = albedo;
-            return (dot(scattered.direction(), rec.normal_) > 0);
-        }
+                const Ray& rIn, const HitRecord& rec, Color3d& attenuation, Ray& scattered
+        ) const override;
 
 };

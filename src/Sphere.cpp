@@ -18,7 +18,7 @@ Point3d &Sphere::center() {
     return center_;
 }
 
-bool Sphere::hit(const Ray& ray, double t_min, double t_max, HitRecord& rec) const {
+bool Sphere::hit(const Ray& ray, double minT, double maxT, HitRecord& rec) const {
     Vector3d oc = ray.origin() - center_;
     auto a = ray.direction().length_squared();
     auto half_b = dot(oc, ray.direction());
@@ -30,9 +30,9 @@ bool Sphere::hit(const Ray& ray, double t_min, double t_max, HitRecord& rec) con
 
     // Find the nearest root that lies in the acceptable range.
     auto root = (-half_b - sqrtd) / a;
-    if (root < t_min || t_max < root) {
+    if (root < minT || maxT < root) {
         root = (-half_b + sqrtd) / a;
-        if (root < t_min || t_max < root)
+        if (root < minT || maxT < root)
             return false;
     }
 
@@ -40,7 +40,23 @@ bool Sphere::hit(const Ray& ray, double t_min, double t_max, HitRecord& rec) con
     rec.p_ = ray.at(rec.t_);
     Vector3d outward_normal = (rec.p_ - center_) / radius_;
     rec.setFaceNormal(ray, outward_normal);
+    getSphereUV(outward_normal, rec.u_, rec.v_);
     rec.matPtr_ = matPtr_;
 
     return true;
+}
+
+bool Sphere::boundingBox(double time0, double time1, AABB &outputBox) const {
+    outputBox = AABB(
+            center_ - Vector3d(radius_,radius_,radius_),
+            center_ + Vector3d(radius_,radius_,radius_));
+    return true;
+}
+
+void Sphere::getSphereUV(const Point3d &p, double &u, double &v) {
+    auto theta = acos(-p.y());
+    auto phi = atan2(-p.z(), p.x()) + pi;
+
+    u = phi / (2*pi);
+    v = theta / pi;
 }

@@ -17,6 +17,8 @@ class Sphere : public HittableInterface {
         Sphere(const Point3d& center, double radius, shared_ptr<Material> m);
         ~Sphere();
         virtual bool hit(const Ray& ray, double minT, double maxT, HitRecord& rec) const override;
+        virtual bool boundingBox(double time0, double time1, AABB& outputBox) const override;
+        static void getSphereUV(const Point3d& p, double& u, double& v);
         Point3d& center();
         double radius();
 
