@@ -21,10 +21,10 @@
 
 /**** Image Globals****/
 auto aspect_ratio = 1.0 / 1.0;
-int width = 600;
+int width = 1200;
 const int height = static_cast<int>(width / aspect_ratio);
-int samplesPerPixel = 200; //500
-const int maxDepth = 50; //50
+int samplesPerPixel = 2000; //500
+const int maxDepth = 250; //50
 double xOffset = 0;
 double yOffset = 0;
 
@@ -68,7 +68,7 @@ void display() {
             auto b = color.z();
 
 
-            glColor3d(
+            glColor3ub(
                     static_cast<int>(256 * color.x()) ,
                     static_cast<int>(256 * color.y()) ,
                     static_cast<int>(256 * color.z())
@@ -105,74 +105,77 @@ void reshape(int w, int h) {
     glutPostRedisplay();
 }
 
-HittableList random_scene() {
-    HittableList world;
-
-    auto checker = make_shared<CheckerTexture>(Color3d(0.2, 0.3, 0.1), Color3d(0.9, 0.9, 0.9));
-    world.add(make_shared<Sphere>(Point3d(0,-1000,0), 1000, make_shared<Lambertian>(checker)));
-
-    for (int a = -11; a < 11; a++) {
-        for (int b = -11; b < 11; b++) {
-            auto choose_mat = randomDouble();
-            Point3d center(a + 0.9*randomDouble(), 0.2, b + 0.9*randomDouble());
-
-            if ((center - Point3d(4, 0.2, 0)).length() > 0.9) {
-                shared_ptr<Material> sphere_material;
-
-                if (choose_mat < 0.8) {
-                    // diffuse
-                    auto albedo = Color3d::random() * Color3d::random();
-                    sphere_material = make_shared<Lambertian>(albedo);
-                    auto center2 = center + Vector3d(0, randomDouble(0,.5), 0);
-                    world.add(make_shared<MovingSphere>(
-                            center, center2, 0.0, 1.0, 0.2, sphere_material));
-                } else if (choose_mat < 0.95) {
-                    // metal
-                    auto albedo = Color3d::random(0.5, 1);
-                    auto fuzz = randomDouble(0, 0.5);
-                    sphere_material = make_shared<Metal>(albedo, fuzz);
-                    world.add(make_shared<Sphere>(center, 0.2, sphere_material));
-                } else {
-                    // glass
-                    sphere_material = make_shared<Dielectric>(1.5);
-                    world.add(make_shared<Sphere>(center, 0.2, sphere_material));
-                }
-            }
-        }
-    }
-
-    auto material1 = make_shared<Dielectric>(1.5);
-    world.add(make_shared<Sphere>(Point3d(0, 1, 0), 1.0, material1));
-
-    auto material2 = make_shared<Lambertian>(Color3d(0.4, 0.2, 0.1));
-    world.add(make_shared<Sphere>(Point3d(-4, 1, 0), 1.0, material2));
-
-    auto material3 = make_shared<Metal>(Color3d(0.7, 0.6, 0.5), 0.0);
-    world.add(make_shared<Sphere>(Point3d(4, 1, 0), 1.0, material3));
-
-    return world;
-}
-
-HittableList two_spheres() {
-    HittableList objects;
-
-    auto checker = make_shared<CheckerTexture>(Color3d(0.2, 0.3, 0.1), Color3d(0.9, 0.9, 0.9));
-
-    objects.add(make_shared<Sphere>(Point3d(0,-10, 0), 10, make_shared<Lambertian>(checker)));
-    objects.add(make_shared<Sphere>(Point3d(0, 10, 0), 10, make_shared<Lambertian>(checker)));
-
-    return objects;
-}
-
-HittableList two_perlin_spheres() {
-    HittableList objects;
-
-    auto pertext = make_shared<NoiseTexture>(4);
-    objects.add(make_shared<Sphere>(Point3d(0,-1000,0), 1000, make_shared<Lambertian>(pertext)));
-    objects.add(make_shared<Sphere>(Point3d(0, 2, 0), 2, make_shared<Lambertian>(pertext)));
-
-    return objects;
-}
+//HittableList random_scene() {
+//    HittableList world;
+//
+//    auto checker = make_shared<CheckerTexture>(Color3d(0.2, 0.3, 0.1), Color3d(0.9, 0.9, 0.9));
+//    world.add(make_shared<Sphere>(Point3d(0,-1000,0), 1000, make_shared<Lambertian>(checker)));
+//
+//    for (int a = -11; a < 11; a++) {
+//        for (int b = -11; b < 11; b++) {
+//            auto choose_mat = randomDouble();
+//            Point3d center(a + 0.9*randomDouble(), 0.2, b + 0.9*randomDouble());
+//
+//            if ((center - Point3d(4, 0.2, 0)).length() > 0.9) {
+//                shared_ptr<Material> sphere_material;
+//
+//                if (choose_mat < 0.8) {
+//                    // diffuse
+//                    auto albedo = Color3d::random() * Color3d::random();
+//                    sphere_material = make_shared<Lambertian>(albedo);
+//                    auto center2 = center + Vector3d(0, randomDouble(0,.5), 0);
+//                    world.add(make_shared<MovingSphere>(
+//                            center, center2, 0.0, 1.0, 0.2, sphere_material));
+//                } else if (choose_mat < 0.95) {
+//                    // metal
+//                    auto albedo = Color3d::random(0.5, 1);
+//                    auto fuzz = randomDouble(0, 0.5);
+//                    sphere_material = make_shared<Metal>(albedo, fuzz);
+//                    world.add(make_shared<Sphere>(center, 0.2, sphere_material));
+//                } else {
+//                    // glass
+//                    sphere_material = make_shared<Dielectric>(1.5);
+//                    world.add(make_shared<Sphere>(center, 0.2, sphere_material));
+//                }
+//            }
+//        }
+//    }
+//
+//    auto material1 = make_shared<Dielectric>(1.5);
+//    world.add(make_shared<Sphere>(Point3d(0, 1, 0), 1.0, material1));
+//
+//    auto material2 = make_shared<Lambertian>(Color3d(0.4, 0.2, 0.1));
+//    world.add(make_shared<Sphere>(Point3d(-4, 1, 0), 1.0, material2));
+//
+//    auto material3 = make_shared<Metal>(Color3d(0.7, 0.6, 0.5), 0.0);
+//    world.add(make_shared<Sphere>(Point3d(4, 1, 0), 1.0, material3));
+//
+//    return world;
+//}
+//
+//HittableList two_spheres() {
+//    HittableList objects;
+//
+//    auto light = make_shared<DiffuseLight>(Color3d(15, 15, 15));
+//    auto checker = make_shared<CheckerTexture>(Color3d(0.2, 0.3, 0.1), Color3d(0.9, 0.9, 0.9));
+//
+//    objects.add(make_shared<XZRect>(213, 343, 227, 332, 554, light));
+//
+//    objects.add(make_shared<Sphere>(Point3d(0,-10, 0), 10, make_shared<Lambertian>(checker)));
+//    objects.add(make_shared<Sphere>(Point3d(0, 10, 0), 10, make_shared<Lambertian>(checker)));
+//
+//    return objects;
+//}
+//
+//HittableList two_perlin_spheres() {
+//    HittableList objects;
+//
+//    auto pertext = make_shared<NoiseTexture>(4);
+//    objects.add(make_shared<Sphere>(Point3d(0,-1000,0), 1000, make_shared<Lambertian>(pertext)));
+//    objects.add(make_shared<Sphere>(Point3d(0, 2, 0), 2, make_shared<Lambertian>(pertext)));
+//
+//    return objects;
+//}
 
 HittableList cornell_box() {
     HittableList objects;
@@ -180,12 +183,18 @@ HittableList cornell_box() {
 
     // Walls
     auto gold = make_shared<Lambertian>(Color3d(.855, .66, 0.0));
-    auto white = make_shared<Lambertian>(Color3d(.73, .73, .73));
+//    auto white = make_shared<Lambertian>(Color3d(.73, .73, .73));
     auto purple = make_shared<Lambertian>(Color3d(.18, .102, .278));
-    auto light = make_shared<DiffuseLight>(Color3d(15, 15, 15));
-    auto checker = make_shared<CheckerTexture>(Color3d(0.0, 0.0, 0.0), Color3d(0.9, 0.9, 0.9));
+//    auto light = make_shared<DiffuseLight>(Color3d(15, 15, 15));
+    auto checker = make_shared<CheckerTexture>(Color3d(0.05, 0.05, 0.05), Color3d(.73, .73, .73));
     auto floor = make_shared<Lambertian>(checker);
     auto metal = make_shared<Metal>(Color3d(0.7, 0.6, 0.5), 0.0);
+    auto glass = make_shared<Dielectric>(1.5);
+
+    auto red   = make_shared<Lambertian>(Color3d(.65, .05, .05));
+    auto white = make_shared<Lambertian>(Color3d(.73, .73, .73));
+    auto green = make_shared<Lambertian>(Color3d(.12, .45, .15));
+    auto light = make_shared<DiffuseLight>(Color3d(15, 15, 15));
 
     objects.add(make_shared<YZRect>(0, 555, 0, 555, 555, purple));
     objects.add(make_shared<YZRect>(0, 555, 0, 555, 0, gold));
@@ -195,14 +204,14 @@ HittableList cornell_box() {
     objects.add(make_shared<XYRect>(0, 555, 0, 555, 555, white));
 
     // Box 1
-    shared_ptr<HittableInterface> box1 = make_shared<Box>(Point3d(0, 0, 0), Point3d(165, 330, 165), white);
+    shared_ptr<HittableInterface> box1 = make_shared<Box>(Point3d(0, 0, 0), Point3d(165, 330, 165), metal);
     box1 = make_shared<RotateY>(box1, 15);
     box1 = make_shared<Translate>(box1, Vector3d(265,0,295));
     objects.add(box1);
 
 
     // Box 2
-    shared_ptr<HittableInterface> sphere1 = make_shared<Sphere>(Point3d(190, 90, 190), 90, metal);
+    shared_ptr<HittableInterface> sphere1 = make_shared<Sphere>(Point3d(190, 90, 190), 90, glass);
     objects.add(sphere1);
 
     return objects;
@@ -230,11 +239,10 @@ int main(int argc, char **argv) {
 
 
     // Render
-
+    #pragma omp parallel for
     for (int j = 0; j < height; j++) {
         for (int i = 0; i < width; i++) {
             Color3d pixelColor(0, 0, 0);
-            #pragma omp parallel for
             for (int s = 0; s < samplesPerPixel; s++) {
                 auto u = (double(i) + randomDouble()) / (width-1);
                 auto v = (double(j) + randomDouble()) / (height-1);
@@ -242,8 +250,24 @@ int main(int argc, char **argv) {
                 pixelColor += rayColor(ray, background, world, maxDepth);
             }
 
-            pixelColor /= samplesPerPixel;
-            pixelColor = sqrt(pixelColor);
+            auto r = pixelColor.x();
+            auto g = pixelColor.y();
+            auto b = pixelColor.z();
+
+            if (r != r) r = 0.0;
+            if (g != g) g = 0.0;
+            if (b != b) b = 0.0;
+
+            auto scale = 1.0 / samplesPerPixel;
+
+            r = pow(scale*r, 1.0/2.0);
+            g = pow(scale*g, 1.0/2.0);
+            b = pow(scale*b, 1.0/2.0);
+
+            pixelColor.coords[0] = r;
+            pixelColor.coords[1] = g;
+            pixelColor.coords[2] = b;
+
             ppm.at(j, i) = pixelColor;
         }
     }

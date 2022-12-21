@@ -2,26 +2,24 @@ cmake_minimum_required(VERSION 3.23)
 project(Ray_Tracing)
 set(CMAKE_CXX_STANDARD 20)
 
+cmake_minimum_required(VERSION 3.9)
+
 file(GLOB_RECURSE SRC_FILES ${CMAKE_SOURCE_DIR}/src/*.cpp)
 file(GLOB_RECURSE HEADER_FILES ${CMAKE_SOURCE_DIR}/src/*.h ${CMAKE_SOURCE_DIR}/include/*.hpp)
 file(GLOB_RECURSE LIBS ${CMAKE_SOURCE_DIR}/lib/*.a)
 file(GLOB_RECURSE DATA ${CMAKE_SOURCE_DIR}/data)
 
 find_package(OpenGL REQUIRED)
+find_package(OpenMP)
+
+find_library(OPENMP_LIB libomp.dylib /usr/local/lib)
 
 LINK_DIRECTORIES(${PROJECT_SOURCE_DIR}/lib)
-
-if (OPENMP_FOUND)
-    set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${OpenMP_C_FLAGS}")
-    set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS}")
-    set (CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} ${OpenMP_EXE_LINKER_FLAGS}")
-endif()
 
 add_executable(${PROJECT_NAME} ${SRC_FILES} ${HEADER_FILES})
 
 
 
-find_package(OpenMP)
-
-
 TARGET_LINK_LIBRARIES(${PROJECT_NAME} ${OPENGL_LIBRARIES} -lfreeglut)
+TARGET_LINK_LIBRARIES(${PROJECT_NAME} ${OPENMP_LIBRARIES} "${OpenMP_CXX_FLAGS}")
+TARGET_COMPILE_OPTIONS(${PROJECT_NAME} PUBLIC "${OpenMP_CXX_FLAGS}")
